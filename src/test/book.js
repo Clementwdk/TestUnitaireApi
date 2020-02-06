@@ -315,7 +315,7 @@ describe('test unitaire', function () {
     
     describe("first part : successful responses", function() {
       describe("GET success", function() {
-        it("books should be an empty array", function(done) {
+        it("books should be an array", function(done) {
           const requestNock = nock('http://localhost:8080')
             .get('/book')
             .reply(200, 
@@ -327,7 +327,6 @@ describe('test unitaire', function () {
             .end(function(err, res) {
               expect(res).to.have.status(200);
               expect(res.body.books).to.be.an('Array');
-              expect(res.body.books).to.be.empty;
               done(); // <= Call done to signal callback end
             });
           });
@@ -336,7 +335,7 @@ describe('test unitaire', function () {
       describe("POST success", function() {
         it("message should be 'book successfully added'", function(done) {
           const requestNock = nock('http://localhost:8080')
-            .post('/book', { title: "Coco raconte Channel 2", years: 1990, pages: 400 })
+            .post('/book')
             .reply(200, {message:'book successfully added'});
   
           chai
@@ -354,12 +353,12 @@ describe('test unitaire', function () {
       describe("PUT success", function() {
         it("response message should be 'book successfully updated'", function(done) {
           const requestNock = nock('http://localhost:8080')
-            .put('/book', { title: "Coco raconte Channel 2", years: 1990, pages: 400 })
+            .put('/book/01')
             .reply(200, {message:'book successfully updated'});
   
           chai
             .request('http://localhost:8080')
-            .put('/book')
+            .put('/book/01')
             .send({
               title: "Coco raconte Channel 2",
               years: 1990,
@@ -378,11 +377,11 @@ describe('test unitaire', function () {
     describe("DELETE success", function() {
       it("response message should be 'book successfully deleted'", done => {
         const requestNock = nock('http://localhost:8080')
-            .delete('/book')
+            .delete('/book/01')
             .reply(200, {message:'book successfully deleted'});
         chai
           .request('http://localhost:8080')
-          .delete('/book')
+          .delete('/book/01')
           .end(function(err, res) {
             expect(res).to.have.status(200);
             expect(res.body.message).to.equal("book successfully deleted");
@@ -414,7 +413,7 @@ describe('test unitaire', function () {
     describe("POST fail", function() {
       it("message should be 'error adding the book'", function(done) {
         const requestNock = nock('http://localhost:8080')
-          .post('/book', { title: "Coco raconte Channel 2", years: 1990, pages: 400 })
+          .post('/book')
           .reply(400, {message:'error adding the book'});
 
         chai
@@ -433,12 +432,12 @@ describe('test unitaire', function () {
     describe("PUT fail", function() {
       it("response message should be 'error updating the book", function(done) {
         const requestNock = nock('http://localhost:8080')
-          .put('/book', { title: "Coco raconte Channel 2", years: 1990, pages: 400 })
+          .put('/book/01')
           .reply(400, {message:'error updating the book'});
 
         chai
           .request('http://localhost:8080')
-          .put('/book')
+          .put('/book/01')
           .send({
             title: "Coco raconte Channel 2",
             years: 1990,
@@ -456,11 +455,11 @@ describe('test unitaire', function () {
     describe("DELETE fail", function() {
       it("response message should be 'error deleting the book'", done => {
         const requestNock = nock('http://localhost:8080')
-            .delete('/book')
+            .delete('/book/01')
             .reply(400, {message:'error deleting the book'});
         chai
           .request('http://localhost:8080')
-          .delete('/book')
+          .delete('/book/01')
           .end(function(err, res) {
             expect(res).to.have.status(400);
             expect(res.body.message).to.equal("error deleting the book");
